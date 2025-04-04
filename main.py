@@ -12,13 +12,13 @@ def init_parser():
         prog = "PictureDateRectifier",
         description = "This program solves the problem of wrong time stamps on image files usually caused by importing images from a phone to a new phone or computer.",
     )
-    parser.add_argument("folder", type=str, help="Path to the folder containing the images")
-    parser.add_argument("-e", "--exif-test", action="store_true", help="Test if the images contain the EXIF data needed for the program to work", default=False)
-    parser.add_argument("-ow", "--overwrite", action="store_true", help="Overwrite the original files", default=False)
-    parser.add_argument("-o", "--output", type=str, help="Path to the folder where the images will be saved", default="output")    
-    parser.add_argument("-p", "--progress", action="store_true", help="Show progress bar")
-    parser.add_argument("-s", "--source", type=str, choices=["exif", "filename"], help="Where to draw the date information from", default="filename")
-    parser.add_argument("-d", "--date", type=str, choices=["modification", "creation", "access"], help="Wich date to set the image to", default="modification")
+    parser.add_argument("folder", type=str, help="path to the folder containing the images")
+    parser.add_argument("-e", "--exif-test", action="store_true", help="test if the images contain the EXIF data needed for the program to work", default=False)
+    parser.add_argument("-ow", "--overwrite", action="store_true", help="overwrite the original files", default=False)
+    parser.add_argument("-o", "--output", type=str, help="path to the folder where the images will be saved")    
+    parser.add_argument("-p", "--progress", action="store_true", help="show progress bar")
+    parser.add_argument("-s", "--source", type=str, choices=["exif", "filename"], help="where to draw the date information from", default="filename")
+    parser.add_argument("-d", "--date", type=str, choices=["modification", "creation", "access"], help="which date to set the image to", default="modification")
 
     args = parser.parse_args()
 
@@ -26,6 +26,8 @@ def init_parser():
         raise FileNotFoundError(f"The folder '{args.folder}' does not exist.")
     if not os.access(args.folder, os.W_OK):
         raise PermissionError(f"The folder '{args.folder}' is not writable.")
+    if not args.overwrite and not args.output:
+         args.output = os.path.join("output")
     if args.output and not os.path.exists(args.output):
         os.makedirs(args.output, exist_ok=True)
     elif args.output and not os.access(args.output, os.W_OK):
