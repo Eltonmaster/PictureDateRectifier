@@ -1,0 +1,1 @@
+PyInstaller -F -c -n PictureDateRectifier -i icon.png --hiddenimport win32timezone .\main.py

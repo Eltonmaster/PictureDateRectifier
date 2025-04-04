@@ -5,6 +5,7 @@ import pywintypes, win32file, win32con
 from datetime import datetime
 from PIL import Image
 import shutil
+from sys import exit
 
 def init_parser():
     parser = argparse.ArgumentParser(
@@ -116,7 +117,7 @@ def convertDatetime(date_string):
         elif len(date_string) == 8:
             return datetime.strptime(date_string, '%Y%m%d')
         else:
-            raise ValueError("Date string is not in the expected format.")
+            raise ValueError()
     except ValueError:
         raise ValueError(f"Date string '{date_string}' is not in the correct format.")
 
