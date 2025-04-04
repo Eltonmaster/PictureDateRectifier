@@ -2,3 +2,6 @@ venv
 test.py
 input
 output
+dist
+build
+PictureDateRectifier.spec
