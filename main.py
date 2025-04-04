@@ -10,12 +10,12 @@ from sys import exit
 def init_parser():
     parser = argparse.ArgumentParser(
         prog = "PictureDateRectifier",
-        description = "This program solves the problem of wrong time stamps on image files usually caused by importing images from a phone to a new phone or computer.",
+        description = "\nThis program solves the problem of wrong timestamps on image files usually caused by importing images from a phone to a new phone or computer.",
     )
     parser.add_argument("folder", type=str, help="path to the folder containing the images")
     parser.add_argument("-e", "--exif-test", action="store_true", help="test if the images contain the EXIF data needed for the program to work", default=False)
     parser.add_argument("-ow", "--overwrite", action="store_true", help="overwrite the original files", default=False)
-    parser.add_argument("-o", "--output", type=str, help="path to the folder where the images will be saved")    
+    parser.add_argument("-o", "--output", type=str, help="path to the folder where the images will be saved - skipped when overwrite is set")    
     parser.add_argument("-p", "--progress", action="store_true", help="show progress bar")
     parser.add_argument("-s", "--source", type=str, choices=["exif", "filename"], help="where to draw the date information from", default="filename")
     parser.add_argument("-d", "--date", type=str, choices=["modification", "creation", "access"], help="which date to set the image to", default="modification")
