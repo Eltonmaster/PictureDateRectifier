@@ -72,12 +72,11 @@ The **PictureDateRectifier** application allows users to configure various param
 Here’s an example of how to use these parameters when running the application:
 
 ```bash
-python PictureDateRectifier.py "C:\path\to\images" -ow -o "C:\path\to\output" -p -s "exif" -d "creation"
+python PictureDateRectifier.py "C:\path\to\images" -o "C:\path\to\output" -p -s "exif" -d "creation"
 ```
 
 In this example:
 - The application will process images in the specified folder.
-- It will overwrite the original files with the corrected timestamps.
 - The corrected images will be saved in the specified output folder.
 - A progress bar will be displayed.
 - The date information will be drawn from the EXIF data.
