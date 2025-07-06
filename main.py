@@ -134,7 +134,7 @@ if __name__ == "__main__":
     with tqdm(total=len(file_list), desc="Processing files", disable=not args.progress) as pbar:
         for entry in file_list:
 
-            if not (entry.endswith("jpg") or entry.endswith("mp4") or entry.endswith("png") or entry.endswith("vid")):
+            if not (entry.lower().endswith("jpg") or entry.lower().endswith("mp4") or entry.lower().endswith("png") or entry.lower().endswith("vid")):
                 pbar.update(1)
                 continue
 
@@ -151,6 +151,9 @@ if __name__ == "__main__":
 
             elif args.source == "json":
                 json_path = os.path.join(args.folder, entry + ".supplemental-metadata.json")
+                if not os.path.exists(json_path):
+                    pbar.update(1)
+                    continue
                 if json_path:
                     with open(json_path, "r") as json_file:
                         data = json.load(json_file)
