@@ -7,6 +7,7 @@ from PIL import Image
 import shutil
 from sys import exit
 import json
+import re
 
 def init_parser():
     parser = argparse.ArgumentParser(
@@ -121,6 +122,8 @@ def convertDatetime(date_string):
             return datetime.strptime(date_string, '%Y%m%d')
         elif len(date_string) == 10:
             return datetime.fromtimestamp(int(date_string))
+        elif len(date_string) == 14:
+            return datetime.strptime(date_string, "%Y%m%d%H%M%S")
         else:
             raise ValueError()
     except ValueError:
@@ -134,7 +137,7 @@ if __name__ == "__main__":
     with tqdm(total=len(file_list), desc="Processing files", disable=not args.progress) as pbar:
         for entry in file_list:
 
-            if not (entry.lower().endswith("jpg") or entry.lower().endswith("mp4") or entry.lower().endswith("png") or entry.lower().endswith("vid")):
+            if not (entry.lower().endswith("jpg") or entry.lower().endswith("jpeg") or entry.lower().endswith("mp4") or entry.lower().endswith("png") or entry.lower().endswith("vid")):
                 pbar.update(1)
                 continue
 
@@ -145,9 +148,18 @@ if __name__ == "__main__":
                 exif_date = exif.get(36867)
                 temp_date = convertDatetime(exif_date)
 
-            elif args.source == "filename":
-                date_str = entry.split("_")[0]
-                temp_date = convertDatetime(date_str)
+            elif args.source == "filename":   #Test for different patterns via regex
+                #20171231_163326.jpg
+                res1 = re.search(r"\d{8}_\d{6}", entry)
+                #IMG-20190426-WA0019.jpg
+                res2 = re.search(r"\d{8}-W", entry)
+
+                if res1:
+                    temp_date = convertDatetime(res1.group().replace("_", ""))
+                elif res2:
+                    temp_date = convertDatetime(res2.group()[:-2])
+                else:
+                    raise ValueError(f"The string '{entry}' does not match with any regular expressions")
 
             elif args.source == "json":
                 json_path = os.path.join(args.folder, entry + ".supplemental-metadata.json")
