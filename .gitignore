@@ -5,3 +5,4 @@ output
 dist
 build
 PictureDateRectifier.spec
+tests

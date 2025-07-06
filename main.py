@@ -6,6 +6,7 @@ from datetime import datetime
 from PIL import Image
 import shutil
 from sys import exit
+import json
 
 def init_parser():
     parser = argparse.ArgumentParser(
@@ -17,7 +18,7 @@ def init_parser():
     parser.add_argument("-ow", "--overwrite", action="store_true", help="overwrite the original files", default=False)
     parser.add_argument("-o", "--output", type=str, help="path to the folder where the images will be saved - skipped when overwrite is set")    
     parser.add_argument("-p", "--progress", action="store_true", help="show progress bar")
-    parser.add_argument("-s", "--source", type=str, choices=["exif", "filename"], help="where to draw the date information from", default="filename")
+    parser.add_argument("-s", "--source", type=str, choices=["exif", "filename", "json"], help="where to draw the date information from", default="filename")
     parser.add_argument("-d", "--date", type=str, choices=["modification", "creation", "access"], help="which date to set the image to", default="modification")
 
     args = parser.parse_args()
@@ -118,6 +119,8 @@ def convertDatetime(date_string):
             return datetime.strptime(date_string, '%Y:%m:%d %H:%M:%S')
         elif len(date_string) == 8:
             return datetime.strptime(date_string, '%Y%m%d')
+        elif len(date_string) == 10:
+            return datetime.fromtimestamp(int(date_string))
         else:
             raise ValueError()
     except ValueError:
@@ -130,6 +133,11 @@ if __name__ == "__main__":
     file_list = [entry for entry in os.listdir(args.folder) if os.path.isfile(os.path.join(args.folder, entry))]
     with tqdm(total=len(file_list), desc="Processing files", disable=not args.progress) as pbar:
         for entry in file_list:
+
+            if not (entry.endswith("jpg") or entry.endswith("mp4") or entry.endswith("png") or entry.endswith("vid")):
+                pbar.update(1)
+                continue
+
             if args.source == "exif":
                 exif = Image.open(os.path.join(args.folder, entry))._getexif()
                 if not exif:
@@ -140,6 +148,15 @@ if __name__ == "__main__":
             elif args.source == "filename":
                 date_str = entry.split("_")[0]
                 temp_date = convertDatetime(date_str)
+
+            elif args.source == "json":
+                json_path = os.path.join(args.folder, entry + ".supplemental-metadata.json")
+                if json_path:
+                    with open(json_path, "r") as json_file:
+                        data = json.load(json_file)
+                    creation_date = data["creationTime"]["timestamp"]
+                    temp_date = convertDatetime(creation_date)
+
 
             file_to_work_on = os.path.join(args.folder, entry)
 
