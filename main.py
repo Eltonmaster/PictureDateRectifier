@@ -153,13 +153,18 @@ if __name__ == "__main__":
                 res1 = re.search(r"\d{8}_\d{6}", entry)
                 #IMG-20190426-WA0019.jpg
                 res2 = re.search(r"\d{8}-W", entry)
+                #Screenshot_20180110-131957.png
+                res3 = re.search(r"\d{8}-\d{6}", entry)
+
 
                 if res1:
                     temp_date = convertDatetime(res1.group().replace("_", ""))
                 elif res2:
                     temp_date = convertDatetime(res2.group()[:-2])
+                elif res3:
+                    temp_date = convertDatetime(res3.group().replace("-", ""))
                 else:
-                    raise ValueError(f"The string '{entry}' does not match with any regular expressions")
+                    raise ValueError("The string '" + entry + "' does not match with any regular expressions")
 
             elif args.source == "json":
                 json_path = os.path.join(args.folder, entry + ".supplemental-metadata.json")
